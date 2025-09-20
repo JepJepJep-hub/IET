@@ -17,6 +17,7 @@ class UserController extends Controller
         $incomingFields['password'] = bcrypt($incomingFields['password']);
         User::create($incomingFields);
 
-        return 'Registered';
+
+        return redirect('/');
     }
 }

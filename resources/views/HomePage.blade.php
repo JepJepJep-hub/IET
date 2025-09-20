@@ -18,15 +18,24 @@
         <a href="{{ url('/dashboard') }}">Go to Dashboard</a>
     </div>
 
+    {{-- Login --}}
     <div id="Login" style="display:none;">
         <h2>Login</h2>
+        {{-- Error checker --}}
+        @if($errors->any())
+            <div style="color:red;">
+                {{ $errors->first() }}
+            </div>
+        @endif
+        
         <form action="/login" method="POST">
             @csrf
             <input name ="name" type="text" placeholder="Username">
             <input name ="password" type="password" placeholder="Password">
             <button type="submit">Submit</button>
-    </form>
-    <a href="javascript:void(0);" onclick="showSection('Register')">Register</a>
+        </form>
+        <a href="javascript:void(0);" onclick="showSection('Register')">Register</a>
+    </div>
 
     <script>
     function showSection(section) {
