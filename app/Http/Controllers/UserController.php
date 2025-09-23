@@ -23,10 +23,4 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'User created successfully!');
     }
-
-    public function showDashboard()
-        {
-            $expenses = Expense::all();
-            return view('dashboard', compact('expenses'));
-        }
 }

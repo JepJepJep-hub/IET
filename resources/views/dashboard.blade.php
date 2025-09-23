@@ -59,9 +59,47 @@
 
     {{-- Income Part --}}
     
-    <div>
-        
+    <h2>Income</h2>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($incomes as $income)
+                <tr>
+                    <td>{{ $income->id }}</td>
+                    <td>{{ $income->category }}</td>
+                    <td>{{ $income->amount }}</td>
+                    <td>{{ $income->description }}</td>
+                    <td>{{ $income->created_at }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
     </div>
+
+    <div id="AddIncome">
+        <form action="{{ route('income.add') }}" method="POST" style="margin-top:20px;">
+            @csrf
+            <h2>Add New Income</h2>
+            <select name="category" required>
+                <option value="">Select Category</option>
+                <option value="sales">Sales</option>
+                <option value="services">Services</option>
+                <option value="other">Other</option>
+            </select>
+            <input name="amount" type="text" step="0.01" placeholder="Amount" required>
+            <input name="description" type="text" placeholder="Description">
+            <button type="submit">Add Income</button>
+        </form>
+    </div>
+
 
     {{-- Logout, temporary --}}
     <form action="/logout" method="POST" style="margin-top:20px;">

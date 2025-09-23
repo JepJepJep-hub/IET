@@ -27,3 +27,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/dashboard', [DashboardController::class, 'showDashboard']);
 
 Route::post('/expenses/add', [ExpenseController::class, 'AddExpense'])->name('expenses.add');
+
+Route::post('/income/add', [IncomeController::class, 'AddIncome'])->name('income.add');

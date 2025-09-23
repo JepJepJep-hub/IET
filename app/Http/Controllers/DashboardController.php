@@ -10,6 +10,7 @@ class DashboardController extends Controller
     public function showDashboard()
         {
             $expenses = Expense::all();
-            return view('dashboard', compact('expenses')); 
+            $incomes = Income::all();
+            return view('dashboard', compact('expenses', 'incomes')); 
         }
 }
