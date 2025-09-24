@@ -16,7 +16,13 @@
     {{-- Expense Part --}}
     <div>
         <h2>Expense</h2>
-        <table border="1" cellpadding="8" cellspacing="0">
+
+        {{-- search bar --}}
+        <div>
+            <input type="text" id="expenseSearch" placeholder="Search expenses...">
+        </div>
+
+        <table id="expensesTable" border="1" cellpadding="8" cellspacing="0">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -69,7 +75,12 @@
     {{-- Income Part --}}
     
     <h2>Income</h2>
-    <table border="1" cellpadding="8" cellspacing="0">
+
+    {{-- search bar --}}
+    <div>
+        <input type="text" id="incomeSearch" placeholder="Search expenses...">
+    </div>
+    <table id="incomesTable" border="1" cellpadding="8" cellspacing="0">
         <thead>
             <tr>
                 <th>ID</th>
@@ -203,9 +214,6 @@
         </div>
     </div>
 
-
-
-
     {{-- Edit table --}}
     <script>
         function openEditModal(expense) {
@@ -232,49 +240,93 @@
         }
 
     </script>
-</body>
 
+    {{-- Search logic --}}
 
-    {{-- chartjs script --}}
-    <canvas id="expenseChart" width="400" height="200"></canvas>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const ctx = document.getElementById('expenseChart').getContext('2d');
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: {!! json_encode($labels) !!},   // PHP → JS
-                datasets: [{
-                    label: 'Expenses by Category',
-                    data: {!! json_encode($data) !!},   // PHP → JS
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.5)',
-                        'rgba(54, 162, 235, 0.5)',
-                        'rgba(255, 206, 86, 0.5)',
-                        'rgba(75, 192, 192, 0.5)',
-                        'rgba(153, 102, 255, 0.5)',
-                        'rgba(255, 159, 64, 0.5)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+    document.getElementById('expenseSearch').addEventListener('keyup', function() 
+    {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#expensesTable tbody tr');
+
+        rows.forEach(row => 
+        {
+            let text = row.innerText.toLowerCase();
+            if (text.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
             }
         });
+    });
+
+    document.getElementById('incomeSearch').addEventListener('keyup', function()
+    {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#incomesTable tbody tr');
+
+        rows.forEach(row => 
+        {
+            let text = row.innerText.toLowerCase();
+            if (text.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    })
+
+    </script>
+
+
+<div id = "ChartContainer" style="width: 50%; margin-top: 50px;">
+    <canvas id="myExpenseChart" width="400" height="200"></canvas>
+</div>
+
+</body>
+
+<script  src="https://cdn.jsdelivr.net/npm/chart.js" ></script>
+<script>
+    
+const ctx = document.getElementById('myExpenseChart');
+
+    const labels = @json($labels);             // categories
+    const expenseValues = @json($expenseValues); 
+    const incomeValues = @json($incomeValues); 
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Expenses',
+                    data: expenseValues,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Incomes',
+                    data: incomeValues,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
 </script>
+
 </html> 
