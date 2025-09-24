@@ -55,53 +55,15 @@
             <h2>Add New Expense</h2>
             <select name="category" required>
                 <option value="">Select Category</option>
-                <option value="student">Business</option>
-                <option value="teacher">Tax</option>
-                <option value="admin">Admin</option>
-                <option value="guest">Guest</option>
+                <option value="Business">Business</option>
+                <option value="Tax">Tax</option>
+                <option value="Labor">Labor</option>
+                <option value="Others">Others</option>
             </select>
             <input name="amount" type="text" step="0.01" placeholder="Amount" required>
             <input name="description" type="text" placeholder="Description">
             <button type="submit">Add Expense</button>
         </form>
-    </div>
-
-    {{-- edit expense --}}
-
-    <div id="editModal" 
-     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
-        <div style="background:white; padding:10px; border-radius:8px; width:400px;">
-            <h2>Edit Data</h2>
-
-            <form id="editModal" method="POST">
-                @csrf
-                @method('PUT')
-
-                <label>Category:</label>
-                <select name="category" id="editCategory" required>
-                    <option value="student">Business</option>
-                    <option value="teacher">Tax</option>
-                    <option value="admin">Admin</option>
-                    <option value="guest">Guest</option>
-                </select>
-
-                <br><br>
-
-                <label>Amount:</label>
-                <input type="text" name="amount" id="editAmount" required>
-
-                <br><br>
-
-                <label>Description:</label>
-                <input type="text" name="description" id="editDescription">
-
-                <br><br>
-
-                <button type="submit">Save</button>
-                <button type="button" onclick="closeEditModal()">Cancel</button>
-            </form>
-        </div>
     </div>
 
     {{-- Income Part --}}
@@ -126,12 +88,9 @@
                     <td>{{ $income->description }}</td>
                     <td>{{ $income->created_at }}</td>
                     <td>
-                        <button type="button" onclick="openEditModal({{ $income->id }}, 
-                        '{{ $income->category }}', 
-                        '{{ $income->amount }}', 
-                        '{{ $income->description }}')">Edit</button>
+                        <button type="button" onclick='openEditIncomeModal(@json($income))'>Edit</button>
 
-                        <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this expense?');">
+                        <form action="{{ route('income.destroy', $income->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this income?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit">Delete</button>
@@ -148,10 +107,11 @@
             @csrf
             <h2>Add New Income</h2>
             <select name="category" required>
-                <option value="">Select Category</option>
-                <option value="sales">Sales</option>
-                <option value="services">Services</option>
-                <option value="other">Other</option>
+                    <option value="">Category</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Services">Services</option>
+                    <option value="Royalty">Royalty</option>
+                    <option value="Other">Other</option>
             </select>
             <input name="amount" type="text" step="0.01" placeholder="Amount" required>
             <input name="description" type="text" placeholder="Description">
@@ -159,11 +119,19 @@
         </form>
     </div>
 
-    {{-- Income Edit popup --}}
+    {{-- Logout, temporary --}}
+    <form action="/logout" method="POST" style="margin-top:20px;">
+        @csrf
+        <button type="submit">Logout</button>
+    </form>
 
-        <div id="editIncomeModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+        {{-- edit expense --}}
+
+    <div id="editExpenseModal" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
         <div style="background:white; padding:10px; border-radius:8px; width:400px;">
-            <h2>Edit Expense</h2>
+            <h2>Edit Data</h2>
 
             <form id="editExpenseForm" method="POST">
                 @csrf
@@ -171,10 +139,11 @@
 
                 <label>Category:</label>
                 <select name="category" id="editCategory" required>
-                    <option value="student">Category</option>
-                    <option value="teacher">Sales</option>
-                    <option value="admin">Services</option>
-                    <option value="guest">Other</option>
+                    <option value="">Select Category</option>
+                    <option value="Business">Business</option>
+                    <option value="Tax">Tax</option>
+                    <option value="Labor">Labor</option>
+                    <option value="Others">Others</option>
                 </select>
 
                 <br><br>
@@ -195,29 +164,73 @@
         </div>
     </div>
 
+            {{-- edit income --}}
 
-    {{-- Logout, temporary --}}
-    <form action="/logout" method="POST" style="margin-top:20px;">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
+    <div id="editIncomeModal" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+        <div style="background:white; padding:10px; border-radius:8px; width:400px;">
+            <h2>Edit Data</h2>
+
+            <form id="editIncomeForm" method="POST">
+                @csrf
+                @method('PUT')
+
+                <label>Category:</label>
+                <select name="category" id="editIncomeCategory" required>
+                    <option value="">Category</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Services">Services</option>
+                    <option value="Royalty">Royalty</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <br><br>
+
+                <label>Amount:</label>
+                <input type="text" name="amount" id="editIncomeAmount" required>
+
+                <br><br>
+
+                <label>Description:</label>
+                <input type="text" name="description" id="editIncomeDescription">
+
+                <br><br>
+
+                <button type="submit">Save</button>
+                <button type="button" onclick="closeEditModal()">Cancel</button>
+            </form>
+        </div>
+    </div>
 
 
 
-    {{-- Edit Expense Script --}}
+
+    {{-- Edit table --}}
     <script>
         function openEditModal(expense) {
         document.getElementById('editCategory').value = expense.category ?? '';
         document.getElementById('editAmount').value = expense.amount ?? '';
         document.getElementById('editDescription').value = expense.description ?? '';
         document.getElementById('editExpenseForm').action = '/expenses/' + expense.id;
-        document.getElementById('editModal').style.display = 'flex'; // modal appears centered
+        document.getElementById('editExpenseModal').style.display = 'flex'; // modal appears centered
         }
 
         function closeEditModal() 
         {
-            document.getElementById('editModal').style.display = 'none';
+            document.getElementById('editExpenseModal').style.display = 'none';
+            document.getElementById('editIncomeModal').style.display = 'none';
         }
+
+        function openEditIncomeModal(income) 
+        {
+        document.getElementById('editIncomeCategory').value = income.category ?? '';
+        document.getElementById('editIncomeAmount').value = income.amount ?? '';
+        document.getElementById('editIncomeDescription').value = income.description ?? '';
+        document.getElementById('editIncomeForm').action = '/income/' + income.id;
+        document.getElementById('editIncomeModal').style.display = 'flex'; // modal appears centered
+        }
+
     </script>
 </body>
 

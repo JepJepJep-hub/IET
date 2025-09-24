@@ -31,7 +31,8 @@ class ExpenseController extends Controller
         $expense = Expense::findOrFail($id);
 
         // Optional: prevent users from deleting others’ data
-        if ($expense->employee_id !== auth()->id()) {
+        if ($expense->employee_id !== auth()->id()) 
+        {
             abort(403, 'Unauthorized action.');
         }
 
@@ -56,14 +57,10 @@ class ExpenseController extends Controller
     {
         $expense = Expense::findOrFail($id);
 
-        if ($expense->employee_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $request->validate([
-            'category' => 'required|string|max:255',
+            'category' => 'required',
             'amount' => 'required|numeric',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string',
         ]);
 
         $expense->update([
@@ -72,6 +69,6 @@ class ExpenseController extends Controller
             'description' => $request->description,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Expense updated successfully!');
+        return redirect('/dashboard')->with('success', 'Expense updated successfully!');
     }
 }

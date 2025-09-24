@@ -35,6 +35,7 @@ Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->name('ex
 Route::get('/expenses/{id}/edit', [ExpenseController::class, 'edit'])->name('expenses.edit');
 Route::put('/expenses/{id}', [ExpenseController::class, 'update'])->name('expenses.update');
 
+
 //For Income Edit and Delete
 Route::delete('/income/{id}', [IncomeController::class, 'destroy'])->name('income.destroy');
 Route::get('/income/{id}/edit', [IncomeController::class, 'edit'])->name('income.edit');
