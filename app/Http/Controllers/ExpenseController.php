@@ -43,14 +43,15 @@ class ExpenseController extends Controller
 
     public function edit($id)
     {
-    $expense = Expense::findOrFail($id);
+        $expense = Expense::findOrFail($id);
 
-    // Optional: restrict access
-    if ($expense->employee_id !== auth()->id()) {
-        abort(403, 'Unauthorized action.');
-    }
+        // Optional: restrict access
+        if ($expense->employee_id !== auth()->id()) 
+            {
+            abort(403, 'Unauthorized action.');
+        }
 
-    return view('expenses.edit', compact('expense'));
+        return view('expenses.edit', compact('expense'));
     }
 
     public function update(Request $request, $id)

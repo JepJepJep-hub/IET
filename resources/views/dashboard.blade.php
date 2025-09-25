@@ -3,50 +3,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IET Dashboard</title>
+        <link rel="icon" href="{{ asset('WebsiteLogo.png') }}" type="image/x-icon">
+    @vite(['resources/js/app.js'])
 </head>
 <body>
-    
-    <h1>Hello, {{ Auth::user()->name }}! This is your dashboard.</h1>
-    @if(session('login_success'))
-        <script>
-            alert('Login was successful!');
-        </script>
-    @endif
 
-    {{-- Expense Part --}}
-    <div>
-        <h2>Expense</h2>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" >Dashboard</a>
 
-        {{-- search bar --}}
-        <div>
-            <input type="text" id="expenseSearch" placeholder="Search expenses...">
+        <button type="button" class="btn btn-sm btn-primary me-2" onclick="showBarChart()">Show Chart</button>
+
+        <div class="d-flex align-items-center text-white">
+        <span class="me-3">Hello, {{ Auth::user()->name }}!</span>
+        <form action="/logout" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-outline-light btn-sm mt-auto">Logout</button>
+        </form>
         </div>
+  </div>
+</nav>
 
-        <table id="expensesTable" border="1" cellpadding="8" cellspacing="0">
-            <thead>
+@if(session('login_success'))
+  <script>
+    alert('Login was successful!');
+  </script>
+@endif
+  {{-- Expense Part --}}
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Expense</h2>
+
+    {{-- search bar --}}
+    <div class="mb-3">
+        <input 
+            type="text" 
+            id="expenseSearch" 
+            class="form-control" 
+            placeholder="🔍 Search expenses..."
+        >
+    </div>
+
+    <div class="table-responsive">
+        <table id="expensesTable" class="table table-striped table-bordered align-middle shadow-sm">
+            <thead class="table-dark text-center">
                 <tr>
                     <th>ID</th>
                     <th>Category</th>
                     <th>Amount</th>
                     <th>Description</th>
                     <th>Date</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($expenses as $expense)
                     <tr>
-                        <td>{{ $expense->id }}</td>
+                        <td class="text-center">{{ $expense->id }}</td>
                         <td>{{ $expense->category }}</td>
-                        <td>{{ $expense->amount }}</td>
+                        <td>₱{{ number_format($expense->amount, 2) }}</td>
                         <td>{{ $expense->description }}</td>
-                        <td>{{ $expense->created_at }}</td>
-                        <td>
-                        <button type="button" onclick='openEditModal(@json($expense))'>Edit</button>
+                        <td>{{ $expense->created_at->format('Y-m-d') }}</td>
+                        <td class="text-center">
+                            <button 
+                                type="button" 
+                                class="btn btn-sm btn-primary me-2" 
+                                onclick='openEditModal(@json($expense))'>
+                                Edit
+                            </button>
 
-                            <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this expense?');">
+                            <form 
+                                action="{{ route('expenses.destroy', $expense->id) }}" 
+                                method="POST" 
+                                style="display:inline;" 
+                                onsubmit="return confirm('Delete this expense?');"
+                            >
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit">Delete</button>
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
                             </form>
                         </td>
                     </tr>
@@ -54,87 +89,181 @@
             </tbody>
         </table>
     </div>
+    {{-- add expense --}}
+    <div id="AddExpense" class="container my-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Add New Expense</h2>
 
-    <div id ="AddExpense">
-        <form action="{{ route('expenses.add') }}" method="POST" style="margin-top:20px;">
-            @csrf
-            <h2>Add New Expense</h2>
-            <select name="category" required>
-                <option value="">Select Category</option>
-                <option value="Business">Business</option>
-                <option value="Tax">Tax</option>
-                <option value="Labor">Labor</option>
-                <option value="Others">Others</option>
-            </select>
-            <input name="amount" type="text" step="0.01" placeholder="Amount" required>
-            <input name="description" type="text" placeholder="Description">
-            <button type="submit">Add Expense</button>
-        </form>
+                <form action="{{ route('expenses.add') }}" method="POST">
+                    @csrf
+
+                    {{-- Category --}}
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select name="category" id="category" class="form-select" required>
+                            <option value="" disabled selected>Select Category</option>
+                            <option value="Business">Business</option>
+                            <option value="Tax">Tax</option>
+                            <option value="Labor">Labor</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+
+                    {{-- Amount --}}
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input 
+                            name="amount" 
+                            id="amount" 
+                            type="number" 
+                            step="0.01" 
+                            class="form-control" 
+                            placeholder="Enter amount" 
+                            required
+                        >
+                    </div>
+
+                    {{-- Description --}}
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input 
+                            name="description" 
+                            id="description" 
+                            type="text" 
+                            class="form-control" 
+                            placeholder="Optional description"
+                        >
+                    </div>
+
+                    {{-- Submit --}}
+                        <div class="text-center">
+                        <button type="submit" class="btn btn-success px-4">
+                            + Add Expense
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+</div>
 
-    {{-- Income Part --}}
-    
-    <h2>Income</h2>
+
+{{-- Income Part --}}
+<div class="container my-5">
+
+    <h2 class="mb-4 text-center">Income</h2>
 
     {{-- search bar --}}
-    <div>
-        <input type="text" id="incomeSearch" placeholder="Search expenses...">
+    <div class="mb-3">
+        <input type="text" id="incomeSearch" class="form-control" placeholder="Search income...">
     </div>
-    <table id="incomesTable" border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Description</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($incomes as $income)
+
+    {{-- Income Table --}}
+    <div class="table-responsive">
+        <table id="incomesTable" class="table table-striped table-bordered align-middle text-center">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ $income->id }}</td>
-                    <td>{{ $income->category }}</td>
-                    <td>{{ $income->amount }}</td>
-                    <td>{{ $income->description }}</td>
-                    <td>{{ $income->created_at }}</td>
-                    <td>
-                        <button type="button" onclick='openEditIncomeModal(@json($income))'>Edit</button>
-
-                        <form action="{{ route('income.destroy', $income->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this income?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit">Delete</button>
-                        </form>
-                    </td>
+                    <th>ID</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Actions</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
-    </div>
+            </thead>
+            <tbody>
+                @foreach($incomes as $income)
+                    <tr>
+                        <td>{{ $income->id }}</td>
+                        <td>{{ $income->category }}</td>
+                        <td>{{ $income->amount }}</td>
+                        <td>{{ $income->description }}</td>
+                        <td>{{ $income->created_at }}</td>
+                        <td>
+                            <button 
+                                type="button" 
+                                class="btn btn-sm btn-primary me-2"
+                                onclick='openEditIncomeModal(@json($income))'>
+                                Edit
+                            </button>
 
-    <div id="AddIncome">
-        <form action="{{ route('income.add') }}" method="POST" style="margin-top:20px;">
-            @csrf
-            <h2>Add New Income</h2>
-            <select name="category" required>
-                    <option value="">Category</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Services">Services</option>
-                    <option value="Royalty">Royalty</option>
-                    <option value="Other">Other</option>
-            </select>
-            <input name="amount" type="text" step="0.01" placeholder="Amount" required>
-            <input name="description" type="text" placeholder="Description">
-            <button type="submit">Add Income</button>
-        </form>
+                            <form action="{{ route('income.destroy', $income->id) }}" 
+                                  method="POST" 
+                                  class="d-inline"
+                                  onsubmit="return confirm('Delete this income?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
+</div>
 
-    {{-- Logout, temporary --}}
-    <form action="/logout" method="POST" style="margin-top:20px;">
-        @csrf
-        <button type="submit">Logout</button>
-    </form>
+{{-- Add Income Form --}}
+<div id="AddIncome" class="container my-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Add New Income</h2>
+
+            <form action="{{ route('income.add') }}" method="POST">
+                @csrf
+
+                {{-- Category --}}
+                <div class="mb-3">
+                    <label for="incomeCategory" class="form-label">Category</label>
+                    <select name="category" id="incomeCategory" class="form-select" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Services">Services</option>
+                        <option value="Royalty">Royalty</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                {{-- Amount --}}
+                <div class="mb-3">
+                    <label for="incomeAmount" class="form-label">Amount</label>
+                    <input 
+                        name="amount" 
+                        id="incomeAmount" 
+                        type="number" 
+                        step="0.01" 
+                        class="form-control" 
+                        placeholder="Enter amount" 
+                        required
+                    >
+                </div>
+
+                {{-- Description --}}
+                <div class="mb-3">
+                    <label for="incomeDescription" class="form-label">Description</label>
+                    <input 
+                        name="description" 
+                        id="incomeDescription" 
+                        type="text" 
+                        class="form-control" 
+                        placeholder="Optional description"
+                    >
+                </div>
+
+                {{-- Submit --}}
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success px-4">
+                        + Add Income
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 
         {{-- edit expense --}}
 
@@ -156,9 +285,7 @@
                     <option value="Labor">Labor</option>
                     <option value="Others">Others</option>
                 </select>
-
-                <br><br>
-
+                
                 <label>Amount:</label>
                 <input type="text" name="amount" id="editAmount" required>
 
@@ -175,14 +302,13 @@
         </div>
     </div>
 
-            {{-- edit income --}}
+        {{-- edit income --}}
 
     <div id="editIncomeModal" 
      style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
             background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
         <div style="background:white; padding:10px; border-radius:8px; width:400px;">
             <h2>Edit Data</h2>
-
             <form id="editIncomeForm" method="POST">
                 @csrf
                 @method('PUT')
@@ -199,7 +325,7 @@
                 <br><br>
 
                 <label>Amount:</label>
-                <input type="text" name="amount" id="editIncomeAmount" required>
+                <input type="number" name="amount" id="editIncomeAmount" required>
 
                 <br><br>
 
@@ -239,12 +365,21 @@
         document.getElementById('editIncomeModal').style.display = 'flex'; // modal appears centered
         }
 
+        function showBarChart() 
+        {
+            document.getElementById('BarChart').style.display ='block';
+            document.getElementById('BarChart').style.display = 'flex';
+        }
+
+        function closeBarChart() {
+            document.getElementById('BarChart').style.display = 'none';
+        }
+
     </script>
 
     {{-- Search logic --}}
-
     <script>
-
+        
     document.getElementById('expenseSearch').addEventListener('keyup', function() 
     {
         let filter = this.value.toLowerCase();
@@ -280,11 +415,27 @@
     </script>
 
 
-<div id = "ChartContainer" style="width: 50%; margin-top: 50px;">
-    <canvas id="myExpenseChart" width="400" height="200"></canvas>
+
+<div id="BarChart" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+    
+    <div style="background:white; padding:20px; border-radius:8px; width:600px; max-width:90%;">
+        <h3 style="text-align:center;">Expense Chart</h3>
+        <div id="ChartContainer" style="width:100%; height:400px;">
+            <canvas id="myExpenseChart"></canvas>
+        </div>
+        <div style="text-align:center; margin-top:15px;">
+            <button onclick="closeBarChart()">Close</button>
+        </div>
+    </div>
 </div>
 
+
 </body>
+
+        </div>
+    </div>
 
 <script  src="https://cdn.jsdelivr.net/npm/chart.js" ></script>
 <script>

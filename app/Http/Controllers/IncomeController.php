@@ -63,7 +63,7 @@ class IncomeController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $income->update([
+        $income->update([   
             'category' => $request->category,
             'amount' => $request->amount,
             'description' => $request->description,
