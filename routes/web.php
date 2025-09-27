@@ -25,6 +25,9 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/dashboard', [DashboardController::class, 'showDashboard']);
+Route::get('/', function () {
+    return view('homepage');
+})->name('homepage');
 
 Route::post('/expenses/add', [ExpenseController::class, 'AddExpense'])->name('expenses.add');
 

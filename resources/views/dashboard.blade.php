@@ -29,6 +29,7 @@
     alert('Login was successful!');
   </script>
 @endif
+
   {{-- Expense Part --}}
 <div class="container my-5">
     <h2 class="mb-4 text-center">Expense</h2>
@@ -223,7 +224,7 @@
                         <option value="Sales">Sales</option>
                         <option value="Services">Services</option>
                         <option value="Royalty">Royalty</option>
-                        <option value="Other">Other</option>
+                        <option value="Other">Other</option> 
                     </select>
                 </div>
 
@@ -286,6 +287,8 @@
                     <option value="Others">Others</option>
                 </select>
                 
+                <br><br>
+                
                 <label>Amount:</label>
                 <input type="text" name="amount" id="editAmount" required>
 
@@ -301,8 +304,8 @@
             </form>
         </div>
     </div>
-
-        {{-- edit income --}}
+    
+    {{-- edit income --}}
 
     <div id="editIncomeModal" 
      style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -411,7 +414,6 @@
             }
         });
     })
-
     </script>
 
 
@@ -420,11 +422,16 @@
      style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
             background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
     
-    <div style="background:white; padding:20px; border-radius:8px; width:600px; max-width:90%;">
-        <h3 style="text-align:center;">Expense Chart</h3>
+    <div style="background:white; padding:20px; border-radius:8px; width:800px; max-width:90%;">
+        <h3 style="text-align:center;">Revenue Chart</h3>
         <div id="ChartContainer" style="width:100%; height:400px;">
             <canvas id="myExpenseChart"></canvas>
         </div>
+    <p><strong>Total Income:</strong> {{ number_format($totalIncome, 2) }}</p>
+    <p><strong>Total Expense:</strong> {{ number_format($totalExpense, 2) }}</p>
+    <p><strong>Total Revenue:</strong> <span class="{{ $totalRevenue < 0 ? 'text-danger' : 'text-success' }}">
+            {{ number_format($totalRevenue, 2) }}
+        </span></p>
         <div style="text-align:center; margin-top:15px;">
             <button onclick="closeBarChart()">Close</button>
         </div>
@@ -434,12 +441,8 @@
 
 </body>
 
-        </div>
-    </div>
-
 <script  src="https://cdn.jsdelivr.net/npm/chart.js" ></script>
 <script>
-    
 const ctx = document.getElementById('myExpenseChart');
 
     const labels = @json($labels);             // categories
@@ -451,18 +454,19 @@ const ctx = document.getElementById('myExpenseChart');
         data: {
             labels: labels,
             datasets: [
+                {   
+                    label: 'Incomes',
+                    data: incomeValues,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+
+                },
                 {
                     label: 'Expenses',
                     data: expenseValues,
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                     borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Incomes',
-                    data: incomeValues,
-                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }
             ]
@@ -470,14 +474,12 @@ const ctx = document.getElementById('myExpenseChart');
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'top' }
+                legend: { position: 'bottom' }
             },
             scales: {
                 y: { beginAtZero: true }
             }
         }
     });
-
 </script>
-
 </html> 
