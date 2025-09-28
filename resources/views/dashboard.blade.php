@@ -44,6 +44,20 @@
         >
     </div>
 
+    {{-- filter --}}
+    <div class="d-flex align-items-center mb-3">
+    <label for="filterExpenseCategory" class="me-2">Category:</label>
+    <select id="filterExpenseCategory" class="form-select w-auto">
+        <option value="">All</option>
+        <option value="Business">Business</option>
+        <option value="Tax">Tax</option>
+        <option value="Labor">Labor</option>
+        <option value="Others">Others</option>
+    </select>
+    <button type="button" class="btn btn-sm btn-secondary ms-3" onclick="filterExpenseByCategory()">Filter</button>
+    </div>
+
+    {{-- table --}}
     <div class="table-responsive">
         <table id="expensesTable" class="table table-striped table-bordered align-middle shadow-sm">
             <thead class="table-dark text-center">
@@ -159,6 +173,20 @@
     <div class="mb-3">
         <input type="text" id="incomeSearch" class="form-control" placeholder="Search income...">
     </div>
+
+        {{-- filter --}}
+    <div class="d-flex align-items-center mb-3">
+    <label for="filterIncomeCategory" class="me-2">Category:</label>
+    <select id="filterIncomeCategory" class="form-select w-auto">
+        <option value="">All</option>
+        <option value="Sales">Sales</option>
+        <option value="Services">Services</option>
+        <option value="Royalty">Royalty</option>
+        <option value="Others">Others</option>
+    </select>
+    <button type="button" class="btn btn-sm btn-secondary ms-3" onclick="filterIncomeByCategory()">Filter</button>
+    </div>
+
 
     {{-- Income Table --}}
     <div class="table-responsive">
@@ -388,6 +416,8 @@
         let filter = this.value.toLowerCase();
         let rows = document.querySelectorAll('#expensesTable tbody tr');
 
+        document.getElementById("filterExpenseCategory").value = "";
+
         rows.forEach(row => 
         {
             let text = row.innerText.toLowerCase();
@@ -404,6 +434,8 @@
         let filter = this.value.toLowerCase();
         let rows = document.querySelectorAll('#incomesTable tbody tr');
 
+        document.getElementById("filterCategory").value = "";
+
         rows.forEach(row => 
         {
             let text = row.innerText.toLowerCase();
@@ -416,6 +448,37 @@
     })
     </script>
 
+    {{-- Filter logic --}}
+
+    <script>
+    function filterExpenseByCategory() {
+        let selected = document.getElementById("filterExpenseCategory").value.toLowerCase();
+        let rows = document.querySelectorAll("#expensesTable tbody tr");
+
+        rows.forEach(row => {
+        let category = row.cells[1].textContent.toLowerCase();
+        if (selected === "" || category === selected) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+        });
+    }
+
+    function filterIncomeByCategory() {
+        let selected = document.getElementById("filterIncomeCategory").value.toLowerCase();
+        let rows = document.querySelectorAll("#incomesTable tbody tr");
+
+        rows.forEach(row => {
+        let category = row.cells[1].textContent.toLowerCase();
+        if (selected === "" || category === selected) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+        });
+    }
+    </script>
 
 
 <div id="BarChart" 
